@@ -1,0 +1,250 @@
+syntax = "proto3";
+
+package delivery;
+
+option go_package = "/delivery";
+
+service CartService {
+    rpc CreateCart(CreateCartRequest) returns (InfoResponse);
+    rpc GetCart(ById) returns (CartResponse);
+    rpc GetCartByUser(GetCartByUserRequest) returns (CartResponse);
+    rpc UpdateCart(UpdateCartRequest) returns (InfoResponse);
+    rpc DeleteCart(ById) returns (InfoResponse);
+    rpc CreateCartItem(CreateCartItemRequest) returns (InfoResponse);
+    rpc GetCartItems(GetCartItemsRequest) returns (GetCartItemsResponse);
+    rpc DeleteCartItem(DeleteCartItemRequest) returns (InfoResponse);
+    rpc UpdateCartItemQuantity(UpdateCartItemQuantityRequest) returns (InfoResponse);
+}
+
+service Office {
+    rpc CreateOffice(CreateOfficeRequest) returns (InfoResponse);
+    rpc GetOffice(GetOfficeRequest) returns (OfficeResponse);
+    rpc GetAllOffices(GetAllOfficesRequest) returns (GetAllOfficesResponse);
+    rpc UpdateOffice(UpdateOfficeRequest) returns (InfoResponse);
+    rpc DeleteOffice(DeleteOfficeRequest) returns (InfoResponse);
+}
+
+service OrdersService {
+    rpc CreateOrder(CreateOrderRequest) returns (InfoResponse);
+    rpc GetOrder(GetOrderRequest) returns (OrderResponse);
+    rpc GetAllOrders(GetAllOrdersRequest) returns (GetAllOrdersResponse);
+    rpc GetOrderByClient(GetOrderByClientRequest) returns (GetOrderByClientResponse);
+    rpc UpdateOrder(UpdateOrderRequest) returns (InfoResponse);
+    rpc DeleteOrder(DeleteOrderRequest) returns (InfoResponse);
+}
+
+service ProductService {
+    rpc CreateProduct(CreateProductRequest) returns (InfoResponse);
+    rpc GetProduct(GetProductRequest) returns (ProductResponse);
+    rpc GetProducts(GetAllProductsRequest) returns (GetProductsResponse);
+    rpc UpdateProduct(UpdateProductRequest) returns (InfoResponse); 
+    rpc DeleteProduct(DeleteProductRequest) returns (InfoResponse); 
+}
+
+message CreateProductRequest {
+    string name = 1;
+    string description = 2;
+    float price = 3;
+    int32 stock = 4;
+    string category = 5;
+}
+
+message GetProductRequest {
+    string product_id = 1;
+}
+
+message ProductResponse {
+    string product_id = 1;
+    string name = 2;
+    string description = 3;
+    float price = 4;
+    int32 stock = 5;
+    string category = 6;
+}
+
+message GetAllProductsRequest {
+    int32 page = 1; 
+    int32 limit = 2;
+}
+
+message GetProductsResponse {
+    repeated ProductResponse products = 1; 
+    int32 total_count = 2; 
+}
+
+message UpdateProductRequest {
+    string product_id = 1;
+    string name = 2;
+    string description = 3;
+    float price = 4;
+    int32 stock = 5;
+    string category = 6;
+}
+
+message DeleteProductRequest {
+    string product_id = 1;
+}
+
+message InfoResponse {
+    bool success = 1;
+    string message = 2;
+}
+
+
+message CreateOrderRequest {
+    string client_id = 1;
+    string product_id = 2;
+    int32 quantity = 3;
+    string address = 4;
+    string order_date = 5;
+    string delivery_date = 6;
+    string status = 7;
+}
+
+message GetOrderRequest {
+    string order_id = 1; 
+}
+
+message OrderResponse {
+    string order_id = 1;
+    string client_id = 2;
+    string product_id = 3;
+    int32 quantity = 4;
+    string address = 5;
+    string order_date = 6;
+    string delivery_date = 7;
+    string status = 8;
+}
+
+message GetAllOrdersRequest {
+    int32 page = 1;  
+    int32 limit = 2; 
+}
+
+message GetAllOrdersResponse {
+    repeated OrderResponse orders = 1; 
+    int32 total_count = 2;
+}
+
+message GetOrderByClientRequest {
+    string client_id = 1; 
+    int32 page = 2;  
+    int32 limit = 3;
+}
+
+message GetOrderByClientResponse {
+    repeated OrderResponse orders = 1; 
+    int32 total_count = 2;
+}
+
+message UpdateOrderRequest {
+    string order_id = 1;
+    string product_id = 2;
+    int32 quantity = 3;
+    string address = 4;
+    string delivery_date = 5;
+    string status = 6;
+}
+
+message DeleteOrderRequest {
+    string order_id = 1;
+}
+
+message CreateOfficeRequest {
+    string name = 1;
+    string address = 2;
+    string phone_number = 3;
+    string email = 4;
+}
+
+message GetOfficeRequest {
+    string office_id = 1; 
+}
+
+message OfficeResponse {
+    string office_id = 1;
+    string name = 2;
+    string address = 3;
+    string phone_number = 4;
+    string email = 5;
+}
+
+message GetAllOfficesRequest {
+    int32 page = 1;
+    int32 limit = 2;
+}
+
+message GetAllOfficesResponse {
+    repeated OfficeResponse offices = 1;
+    int32 total_count = 2;
+}
+
+message UpdateOfficeRequest {
+    string office_id = 1;
+    string name = 2;
+    string address = 3;
+    string phone_number = 4;
+    string email = 5;
+}
+
+message DeleteOfficeRequest {
+    string office_id = 1;
+}
+
+message CreateCartRequest {
+    string id = 1;
+    string user_id = 2;
+    string status = 3;
+}
+
+message GetCartByUserRequest {
+    string user_id = 1;
+}
+
+message UpdateCartRequest {
+    string id = 1;
+    string user_id = 2;
+    string status = 3;
+}
+
+message ById {
+    string id = 1;
+}
+
+message CreateCartItemRequest {
+    string cart_id = 1;
+    string product_id = 2;
+    int32 quantity = 3;
+}
+
+message GetCartItemsRequest {
+    string cart_id = 1;
+}
+
+message GetCartItemsResponse {
+    repeated CartItem items = 1;
+}
+
+message DeleteCartItemRequest {
+    string cart_id = 1;
+    string product_id = 2;
+}
+
+message UpdateCartItemQuantityRequest {
+    string cart_id = 1;
+    string product_id = 2;
+    int32 quantity = 3;
+}
+
+message CartResponse {
+    string id = 1;
+    string user_id = 2;
+    string status = 3;
+    repeated CartItem items = 4;
+}
+
+message CartItem {
+    string product_id = 1;
+    int32 quantity = 2;
+    double price = 3;
+}
