@@ -19,22 +19,23 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	AuthService_GetProfile_FullMethodName           = "/auth.AuthService/GetProfile"
-	AuthService_UpdateProfile_FullMethodName        = "/auth.AuthService/UpdateProfile"
-	AuthService_DeleteProfile_FullMethodName        = "/auth.AuthService/DeleteProfile"
-	AuthService_ListAllProfiles_FullMethodName      = "/auth.AuthService/ListAllProfiles"
-	AuthService_DeleteProfileByAdmin_FullMethodName = "/auth.AuthService/DeleteProfileByAdmin"
-	AuthService_RegisterUser_FullMethodName         = "/auth.AuthService/RegisterUser"
-	AuthService_LoginUser_FullMethodName            = "/auth.AuthService/LoginUser"
-	AuthService_RegisterCourier_FullMethodName      = "/auth.AuthService/RegisterCourier"
-	AuthService_LoginCourier_FullMethodName         = "/auth.AuthService/LoginCourier"
-	AuthService_VerifyEmail_FullMethodName          = "/auth.AuthService/VerifyEmail"
-	AuthService_RefreshToken_FullMethodName         = "/auth.AuthService/RefreshToken"
-	AuthService_ChangePassword_FullMethodName       = "/auth.AuthService/ChangePassword"
-	AuthService_ForgetPassword_FullMethodName       = "/auth.AuthService/ForgetPassword"
-	AuthService_ResetPassword_FullMethodName        = "/auth.AuthService/ResetPassword"
-	AuthService_ChangeEmail_FullMethodName          = "/auth.AuthService/ChangeEmail"
-	AuthService_VerifyNewEmail_FullMethodName       = "/auth.AuthService/VerifyNewEmail"
+	AuthService_GetProfile_FullMethodName            = "/auth.AuthService/GetProfile"
+	AuthService_UpdateProfile_FullMethodName         = "/auth.AuthService/UpdateProfile"
+	AuthService_DeleteProfile_FullMethodName         = "/auth.AuthService/DeleteProfile"
+	AuthService_ListAllProfiles_FullMethodName       = "/auth.AuthService/ListAllProfiles"
+	AuthService_DeleteProfileByAdmin_FullMethodName  = "/auth.AuthService/DeleteProfileByAdmin"
+	AuthService_RegisterUser_FullMethodName          = "/auth.AuthService/RegisterUser"
+	AuthService_LoginUser_FullMethodName             = "/auth.AuthService/LoginUser"
+	AuthService_RegisterCourier_FullMethodName       = "/auth.AuthService/RegisterCourier"
+	AuthService_LoginCourier_FullMethodName          = "/auth.AuthService/LoginCourier"
+	AuthService_VerifyEmail_FullMethodName           = "/auth.AuthService/VerifyEmail"
+	AuthService_RefreshToken_FullMethodName          = "/auth.AuthService/RefreshToken"
+	AuthService_ChangePassword_FullMethodName        = "/auth.AuthService/ChangePassword"
+	AuthService_ForgetPassword_FullMethodName        = "/auth.AuthService/ForgetPassword"
+	AuthService_ResetPassword_FullMethodName         = "/auth.AuthService/ResetPassword"
+	AuthService_ChangeEmail_FullMethodName           = "/auth.AuthService/ChangeEmail"
+	AuthService_VerifyNewEmail_FullMethodName        = "/auth.AuthService/VerifyNewEmail"
+	AuthService_CheckEmailAndPassword_FullMethodName = "/auth.AuthService/CheckEmailAndPassword"
 )
 
 // AuthServiceClient is the client API for AuthService service.
@@ -61,6 +62,7 @@ type AuthServiceClient interface {
 	ResetPassword(ctx context.Context, in *ResetPasswordRequest, opts ...grpc.CallOption) (*InfoResponse, error)
 	ChangeEmail(ctx context.Context, in *ChangeEmailRequest, opts ...grpc.CallOption) (*InfoResponse, error)
 	VerifyNewEmail(ctx context.Context, in *VerifyNewEmailRequest, opts ...grpc.CallOption) (*TokenResponse, error)
+	CheckEmailAndPassword(ctx context.Context, in *CheckEmailAndPasswordRequest, opts ...grpc.CallOption) (*InfoResponse, error)
 }
 
 type authServiceClient struct {
@@ -231,6 +233,16 @@ func (c *authServiceClient) VerifyNewEmail(ctx context.Context, in *VerifyNewEma
 	return out, nil
 }
 
+func (c *authServiceClient) CheckEmailAndPassword(ctx context.Context, in *CheckEmailAndPasswordRequest, opts ...grpc.CallOption) (*InfoResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(InfoResponse)
+	err := c.cc.Invoke(ctx, AuthService_CheckEmailAndPassword_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AuthServiceServer is the server API for AuthService service.
 // All implementations must embed UnimplementedAuthServiceServer
 // for forward compatibility.
@@ -255,6 +267,7 @@ type AuthServiceServer interface {
 	ResetPassword(context.Context, *ResetPasswordRequest) (*InfoResponse, error)
 	ChangeEmail(context.Context, *ChangeEmailRequest) (*InfoResponse, error)
 	VerifyNewEmail(context.Context, *VerifyNewEmailRequest) (*TokenResponse, error)
+	CheckEmailAndPassword(context.Context, *CheckEmailAndPasswordRequest) (*InfoResponse, error)
 	mustEmbedUnimplementedAuthServiceServer()
 }
 
@@ -312,6 +325,9 @@ func (UnimplementedAuthServiceServer) ChangeEmail(context.Context, *ChangeEmailR
 }
 func (UnimplementedAuthServiceServer) VerifyNewEmail(context.Context, *VerifyNewEmailRequest) (*TokenResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method VerifyNewEmail not implemented")
+}
+func (UnimplementedAuthServiceServer) CheckEmailAndPassword(context.Context, *CheckEmailAndPasswordRequest) (*InfoResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CheckEmailAndPassword not implemented")
 }
 func (UnimplementedAuthServiceServer) mustEmbedUnimplementedAuthServiceServer() {}
 func (UnimplementedAuthServiceServer) testEmbeddedByValue()                     {}
@@ -622,6 +638,24 @@ func _AuthService_VerifyNewEmail_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AuthService_CheckEmailAndPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CheckEmailAndPasswordRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).CheckEmailAndPassword(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthService_CheckEmailAndPassword_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).CheckEmailAndPassword(ctx, req.(*CheckEmailAndPasswordRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AuthService_ServiceDesc is the grpc.ServiceDesc for AuthService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -692,6 +726,10 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "VerifyNewEmail",
 			Handler:    _AuthService_VerifyNewEmail_Handler,
+		},
+		{
+			MethodName: "CheckEmailAndPassword",
+			Handler:    _AuthService_CheckEmailAndPassword_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

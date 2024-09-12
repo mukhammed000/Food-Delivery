@@ -37,10 +37,9 @@ func NewGin(h *handler.Handler) *gin.Engine {
 	auth := r.Group("/auth")
 	{
 		auth.POST("/register-user", h.RegisterUser)
-		auth.POST("/login-user", h.LoginUser)
+		auth.POST("/login", h.Login)
 		auth.POST("/register-courier", h.RegisterCourier)
-		auth.POST("/login-courier", h.LoginCourier)
-
+		auth.POST("/verify-email", h.VerifyEmail)
 	}
 
 	pro := r.Group("/profile")
@@ -52,7 +51,6 @@ func NewGin(h *handler.Handler) *gin.Engine {
 
 	add := r.Group("/additional")
 	{
-		add.POST("/verify-email", h.VerifyEmail)
 		add.PUT("/refresh-token", h.RefreshToken)
 		add.PUT("/change-password", h.ChangePassword)
 		add.POST("/forget-password", h.ForgetPassword)

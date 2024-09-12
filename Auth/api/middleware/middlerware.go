@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"strings"
 
-	t "auth/api/token"
 	"auth/config"
+	t "auth/token"
 
 	"github.com/casbin/casbin/v2"
 	"github.com/gin-gonic/gin"

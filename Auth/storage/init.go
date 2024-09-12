@@ -20,9 +20,8 @@ type AuthService interface {
 
 	// Users and Couriers
 	RegisterUser(req *auth.Register) (*auth.InfoResponse, error)
-	LoginUser(req *auth.Login) (*auth.TokenResponse, error)
 	RegisterCourier(req *auth.Register) (*auth.InfoResponse, error)
-	LoginCourier(req *auth.Login) (*auth.TokenResponse, error)
+	Login(req *auth.Login) (*auth.TokenResponse, error)
 
 	// Both
 	VerifyEmail(req *auth.VerifyEmailRequest) (*auth.InfoResponse, error)
@@ -32,4 +31,5 @@ type AuthService interface {
 	ResetPassword(req *auth.ResetPasswordRequest) (*auth.InfoResponse, error)
 	ChangeEmail(req *auth.ChangeEmailRequest) (*auth.InfoResponse, error)
 	VerifyNewEmail(req *auth.VerifyNewEmailRequest) (*auth.TokenResponse, error)
+	CheckEmailAndPassword(req *auth.CheckEmailAndPasswordRequest) (*auth.InfoResponse, error)
 }

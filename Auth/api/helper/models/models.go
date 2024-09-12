@@ -8,3 +8,10 @@ type UserRegister struct {
 	Gender      string
 	Email       string
 }
+
+type UpdateRequest struct {
+	FirstName   string
+	LastName    string
+	DateOfBirth string
+	Gender      string
+}

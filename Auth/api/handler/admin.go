@@ -1,8 +1,8 @@
 package handler
 
 import (
-	"auth/api/token"
 	"auth/genproto/auth"
+	"auth/token"
 	"net/http"
 
 	"github.com/gin-gonic/gin"

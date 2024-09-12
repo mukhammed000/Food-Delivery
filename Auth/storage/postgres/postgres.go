@@ -40,8 +40,7 @@ func NewPostgresStorage(cfg config.Config) (stg.InitRoot, error) {
 
 func (s *Storage) Auth() stg.AuthService {
 	if s.auth == nil {
-		s.auth = &AuthStorage{db: s.Db}
+		s.auth = &AuthStorage{db: s.Db, rdb: s.Rdb}
 	}
 	return s.auth
 }
-	

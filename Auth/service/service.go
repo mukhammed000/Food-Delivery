@@ -72,15 +72,6 @@ func (s *AuthService) RegisterUser(ctx context.Context, req *auth.Register) (*au
 	return resp, nil
 }
 
-func (s *AuthService) LoginUser(ctx context.Context, req *auth.Login) (*auth.TokenResponse, error) {
-	resp, err := s.stg.Auth().LoginUser(req)
-	if err != nil {
-		log.Println("Error logging in user: ", err)
-		return nil, err
-	}
-	return resp, nil
-}
-
 func (s *AuthService) RegisterCourier(ctx context.Context, req *auth.Register) (*auth.InfoResponse, error) {
 	resp, err := s.stg.Auth().RegisterCourier(req)
 	if err != nil {
@@ -90,8 +81,8 @@ func (s *AuthService) RegisterCourier(ctx context.Context, req *auth.Register) (
 	return resp, nil
 }
 
-func (s *AuthService) LoginCourier(ctx context.Context, req *auth.Login) (*auth.TokenResponse, error) {
-	resp, err := s.stg.Auth().LoginCourier(req)
+func (s *AuthService) Login(ctx context.Context, req *auth.Login) (*auth.TokenResponse, error) {
+	resp, err := s.stg.Auth().Login(req)
 	if err != nil {
 		log.Println("Error logging in courier: ", err)
 		return nil, err
@@ -161,3 +152,13 @@ func (s *AuthService) VerifyNewEmail(ctx context.Context, req *auth.VerifyNewEma
 	}
 	return resp, nil
 }
+
+func (s *AuthService) CheckEmailAndPassword(ctx context.Context, req *auth.CheckEmailAndPasswordRequest) (*auth.InfoResponse, error) {
+	resp, err := s.stg.Auth().CheckEmailAndPassword(req)
+	if err != nil {
+		log.Println("Error verifying new email: ", err)
+		return nil, err
+	}
+	return resp, nil
+}
+

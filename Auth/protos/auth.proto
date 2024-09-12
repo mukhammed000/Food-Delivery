@@ -28,6 +28,7 @@ service AuthService{
     rpc ResetPassword(ResetPasswordRequest) returns (InfoResponse);
     rpc ChangeEmail(ChangeEmailRequest) returns (InfoResponse);
     rpc VerifyNewEmail(VerifyNewEmailRequest) returns (TokenResponse);
+    rpc CheckEmailAndPassword(CheckEmailAndPasswordRequest) returns (InfoResponse);
 }
 
 message User{
@@ -89,6 +90,7 @@ message Register{
     string email = 6;
     string password = 7;
     string role = 8;
+    string code = 9;       // For verification code
 }
 
 message Login{
@@ -109,12 +111,14 @@ message VerifyEmailRequest{
 }
 
 message ChangePasswordRequest{
-    string current_password = 1;
-    string new_password = 2;
+    string id = 1;
+    string current_password = 2;
+    string new_password = 3;
 }
 
 message ForgetPasswordRequest{
     string email = 1;
+    string code = 2;
 }
 
 message ResetPasswordRequest{
@@ -127,10 +131,17 @@ message ResetPasswordRequest{
 message ChangeEmailRequest{
     string current_email = 1;
     string new_email = 2;
+    string password = 3;
+    string code = 4;
 }
 
 message VerifyNewEmailRequest{
     string id = 1;
     string new_email = 2;
     string code = 3;
+}
+
+message CheckEmailAndPasswordRequest{
+    string email = 1;
+    string password = 2;
 }
