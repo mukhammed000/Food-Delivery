@@ -31,15 +31,6 @@ definitions:
       quantity:
         type: integer
     type: object
-  delivery.CreateCartRequest:
-    properties:
-      id:
-        type: string
-      status:
-        type: string
-      user_id:
-        type: string
-    type: object
   delivery.CreateOfficeRequest:
     properties:
       address:
@@ -253,7 +244,64 @@ info:
   title: Voting service
   version: "1.0"
 paths:
-  /cart/{id}:
+  /cart/create-cart:
+    post:
+      consumes:
+      - application/json
+      description: Creates a new cart for a user and returns the cart details.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Cart created successfully
+          schema:
+            $ref: '#/definitions/delivery.CartResponse'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/delivery.InfoResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/delivery.InfoResponse'
+      security:
+      - BearerAuth: []
+      summary: Create a new cart
+      tags:
+      - Cart
+  /cart/create-cart-item:
+    post:
+      consumes:
+      - application/json
+      description: Adds an item to the specified cart based on the provided details.
+      parameters:
+      - description: Cart item creation request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/delivery.CreateCartItemRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Item added to cart successfully
+          schema:
+            $ref: '#/definitions/delivery.InfoResponse'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/delivery.InfoResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/delivery.InfoResponse'
+      security:
+      - BearerAuth: []
+      summary: Add a new item to a cart
+      tags:
+      - Cart
+  /cart/delete-cart:
     delete:
       consumes:
       - application/json
@@ -279,9 +327,53 @@ paths:
           description: Internal server error
           schema:
             $ref: '#/definitions/delivery.InfoResponse'
+      security:
+      - BearerAuth: []
       summary: Delete a cart by ID
       tags:
       - Cart
+  /cart/delete-cart-item:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes a specific item from a cart based on the provided cart
+        ID and product ID.
+      parameters:
+      - description: Cart ID
+        in: path
+        name: cart_id
+        required: true
+        type: string
+      - description: Product ID
+        in: path
+        name: product_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Cart item deleted successfully
+          schema:
+            $ref: '#/definitions/delivery.InfoResponse'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/delivery.InfoResponse'
+        "404":
+          description: Cart item not found
+          schema:
+            $ref: '#/definitions/delivery.InfoResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/delivery.InfoResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete a cart item
+      tags:
+      - Cart
+  /cart/get-cart:
     get:
       consumes:
       - application/json
@@ -311,9 +403,83 @@ paths:
           description: Internal server error
           schema:
             $ref: '#/definitions/delivery.InfoResponse'
+      security:
+      - BearerAuth: []
       summary: Get a cart by ID
       tags:
       - Cart
+  /cart/get-cart-by-user:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves the details of a cart for a specific user based on the
+        provided user ID.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Cart retrieved successfully
+          schema:
+            $ref: '#/definitions/delivery.CartResponse'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/delivery.InfoResponse'
+        "404":
+          description: Cart not found
+          schema:
+            $ref: '#/definitions/delivery.InfoResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/delivery.InfoResponse'
+      security:
+      - BearerAuth: []
+      summary: Get a cart by user ID
+      tags:
+      - Cart
+  /cart/get-cart-item:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves the details of a specific item in a cart based on the
+        provided cart ID and product ID.
+      parameters:
+      - description: Cart ID
+        in: path
+        name: cart_id
+        required: true
+        type: string
+      - description: Product ID
+        in: path
+        name: product_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Cart item details
+          schema:
+            $ref: '#/definitions/delivery.CartItem'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/delivery.InfoResponse'
+        "404":
+          description: Cart item not found
+          schema:
+            $ref: '#/definitions/delivery.InfoResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/delivery.InfoResponse'
+      security:
+      - BearerAuth: []
+      summary: Get a cart item by cart ID and product ID
+      tags:
+      - Cart
+  /cart/update-cart:
     put:
       consumes:
       - application/json
@@ -350,147 +516,12 @@ paths:
           description: Internal server error
           schema:
             $ref: '#/definitions/delivery.InfoResponse'
+      security:
+      - BearerAuth: []
       summary: Update an existing cart
       tags:
       - Cart
-  /cart/create-cart:
-    post:
-      consumes:
-      - application/json
-      description: Creates a new cart for a user and returns the cart details.
-      parameters:
-      - description: Cart creation request
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/delivery.CreateCartRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Cart created successfully
-          schema:
-            $ref: '#/definitions/delivery.CartResponse'
-        "400":
-          description: Bad request
-          schema:
-            $ref: '#/definitions/delivery.InfoResponse'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/delivery.InfoResponse'
-      summary: Create a new cart
-      tags:
-      - Cart
-  /cart/item:
-    post:
-      consumes:
-      - application/json
-      description: Adds an item to the specified cart based on the provided details.
-      parameters:
-      - description: Cart item creation request
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/delivery.CreateCartItemRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Item added to cart successfully
-          schema:
-            $ref: '#/definitions/delivery.InfoResponse'
-        "400":
-          description: Bad request
-          schema:
-            $ref: '#/definitions/delivery.InfoResponse'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/delivery.InfoResponse'
-      summary: Add a new item to a cart
-      tags:
-      - Cart
-  /cart/item/{cart_id}/{product_id}:
-    delete:
-      consumes:
-      - application/json
-      description: Deletes a specific item from a cart based on the provided cart
-        ID and product ID.
-      parameters:
-      - description: Cart ID
-        in: path
-        name: cart_id
-        required: true
-        type: string
-      - description: Product ID
-        in: path
-        name: product_id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Cart item deleted successfully
-          schema:
-            $ref: '#/definitions/delivery.InfoResponse'
-        "400":
-          description: Bad request
-          schema:
-            $ref: '#/definitions/delivery.InfoResponse'
-        "404":
-          description: Cart item not found
-          schema:
-            $ref: '#/definitions/delivery.InfoResponse'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/delivery.InfoResponse'
-      summary: Delete a cart item
-      tags:
-      - Cart
-    get:
-      consumes:
-      - application/json
-      description: Retrieves the details of a specific item in a cart based on the
-        provided cart ID and product ID.
-      parameters:
-      - description: Cart ID
-        in: path
-        name: cart_id
-        required: true
-        type: string
-      - description: Product ID
-        in: path
-        name: product_id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Cart item details
-          schema:
-            $ref: '#/definitions/delivery.CartItem'
-        "400":
-          description: Bad request
-          schema:
-            $ref: '#/definitions/delivery.InfoResponse'
-        "404":
-          description: Cart item not found
-          schema:
-            $ref: '#/definitions/delivery.InfoResponse'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/delivery.InfoResponse'
-      summary: Get a cart item by cart ID and product ID
-      tags:
-      - Cart
-  /cart/item/{cart_id}/{product_id}/quantity:
+  /cart/update-cart-item-quantity:
     put:
       consumes:
       - application/json
@@ -532,44 +563,44 @@ paths:
           description: Internal server error
           schema:
             $ref: '#/definitions/delivery.InfoResponse'
+      security:
+      - BearerAuth: []
       summary: Update the quantity of a cart item
       tags:
       - Cart
-  /cart/user/{user_id}:
-    get:
+  /office/create-office:
+    post:
       consumes:
       - application/json
-      description: Retrieves the details of a cart for a specific user based on the
-        provided user ID.
+      description: Creates a new office based on the provided office details.
       parameters:
-      - description: User ID
-        in: path
-        name: user_id
+      - description: Create office request
+        in: body
+        name: request
         required: true
-        type: string
+        schema:
+          $ref: '#/definitions/delivery.CreateOfficeRequest'
       produces:
       - application/json
       responses:
         "200":
-          description: Cart retrieved successfully
-          schema:
-            $ref: '#/definitions/delivery.CartResponse'
-        "400":
-          description: Bad request
+          description: Office created successfully
           schema:
             $ref: '#/definitions/delivery.InfoResponse'
-        "404":
-          description: Cart not found
+        "400":
+          description: Invalid request
           schema:
             $ref: '#/definitions/delivery.InfoResponse'
         "500":
           description: Internal server error
           schema:
             $ref: '#/definitions/delivery.InfoResponse'
-      summary: Get a cart by user ID
+      security:
+      - BearerAuth: []
+      summary: Create a new office
       tags:
-      - Cart
-  /office:
+      - Office
+  /office/delete-office:
     delete:
       consumes:
       - application/json
@@ -600,27 +631,34 @@ paths:
           description: Internal server error
           schema:
             $ref: '#/definitions/delivery.InfoResponse'
+      security:
+      - BearerAuth: []
       summary: Delete an office
       tags:
       - Office
-    post:
+  /office/get-all-ofice:
+    get:
       consumes:
       - application/json
-      description: Creates a new office based on the provided office details.
+      description: Retrieves a list of all offices with optional pagination.
       parameters:
-      - description: Create office request
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/delivery.CreateOfficeRequest'
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Number of items per page
+        in: query
+        name: limit
+        type: integer
       produces:
       - application/json
       responses:
         "200":
-          description: Office created successfully
+          description: List of all offices retrieved successfully
           schema:
-            $ref: '#/definitions/delivery.InfoResponse'
+            $ref: '#/definitions/delivery.GetAllOfficesResponse'
         "400":
           description: Invalid request
           schema:
@@ -629,9 +667,43 @@ paths:
           description: Internal server error
           schema:
             $ref: '#/definitions/delivery.InfoResponse'
-      summary: Create a new office
+      security:
+      - BearerAuth: []
+      summary: Get all offices
       tags:
       - Office
+  /office/get-office:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves details of an office based on the provided office ID.
+      parameters:
+      - description: Office ID
+        in: path
+        name: office_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Office details retrieved successfully
+          schema:
+            $ref: '#/definitions/delivery.OfficeResponse'
+        "400":
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/delivery.InfoResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/delivery.InfoResponse'
+      security:
+      - BearerAuth: []
+      summary: Get office details
+      tags:
+      - Office
+  /office/update-office:
     put:
       consumes:
       - application/json
@@ -663,73 +735,12 @@ paths:
           description: Internal server error
           schema:
             $ref: '#/definitions/delivery.InfoResponse'
+      security:
+      - BearerAuth: []
       summary: Update an existing office
       tags:
       - Office
-  /office/{office_id}:
-    get:
-      consumes:
-      - application/json
-      description: Retrieves details of an office based on the provided office ID.
-      parameters:
-      - description: Office ID
-        in: path
-        name: office_id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Office details retrieved successfully
-          schema:
-            $ref: '#/definitions/delivery.OfficeResponse'
-        "400":
-          description: Invalid request
-          schema:
-            $ref: '#/definitions/delivery.InfoResponse'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/delivery.InfoResponse'
-      summary: Get office details
-      tags:
-      - Office
-  /offices:
-    get:
-      consumes:
-      - application/json
-      description: Retrieves a list of all offices with optional pagination.
-      parameters:
-      - default: 1
-        description: Page number
-        in: query
-        name: page
-        type: integer
-      - default: 10
-        description: Number of items per page
-        in: query
-        name: limit
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: List of all offices retrieved successfully
-          schema:
-            $ref: '#/definitions/delivery.GetAllOfficesResponse'
-        "400":
-          description: Invalid request
-          schema:
-            $ref: '#/definitions/delivery.InfoResponse'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/delivery.InfoResponse'
-      summary: Get all offices
-      tags:
-      - Office
-  /order:
+  /order/create-order:
     post:
       consumes:
       - application/json
@@ -756,10 +767,12 @@ paths:
           description: Internal server error
           schema:
             $ref: '#/definitions/delivery.InfoResponse'
+      security:
+      - BearerAuth: []
       summary: Create a new order
       tags:
       - Orders
-  /order/{order_id}:
+  /order/get-order:
     get:
       consumes:
       - application/json
@@ -789,10 +802,12 @@ paths:
           description: Internal server error
           schema:
             $ref: '#/definitions/delivery.InfoResponse'
+      security:
+      - BearerAuth: []
       summary: Get order details
       tags:
       - Orders
-  /orders:
+  /orders/delete-order:
     delete:
       consumes:
       - application/json
@@ -819,9 +834,12 @@ paths:
           description: Internal server error
           schema:
             $ref: '#/definitions/delivery.InfoResponse'
+      security:
+      - BearerAuth: []
       summary: Delete an order
       tags:
       - Orders
+  /orders/get-all-orders:
     get:
       consumes:
       - application/json
@@ -855,40 +873,12 @@ paths:
           description: Internal server error
           schema:
             $ref: '#/definitions/delivery.InfoResponse'
+      security:
+      - BearerAuth: []
       summary: Get all orders
       tags:
       - Orders
-    put:
-      consumes:
-      - application/json
-      description: Updates the details of an existing order based on the provided
-        order ID and details.
-      parameters:
-      - description: Update order request
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/delivery.UpdateOrderRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Order updated successfully
-          schema:
-            $ref: '#/definitions/delivery.InfoResponse'
-        "400":
-          description: Invalid request
-          schema:
-            $ref: '#/definitions/delivery.InfoResponse'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/delivery.InfoResponse'
-      summary: Update an existing order
-      tags:
-      - Orders
-  /orders/client:
+  /orders/get-order-by-client:
     get:
       consumes:
       - application/json
@@ -927,26 +917,29 @@ paths:
           description: Internal server error
           schema:
             $ref: '#/definitions/delivery.InfoResponse'
+      security:
+      - BearerAuth: []
       summary: Get orders by client
       tags:
       - Orders
-  /product:
-    delete:
+  /orders/update-order:
+    put:
       consumes:
       - application/json
-      description: Deletes a product based on the provided product ID.
+      description: Updates the details of an existing order based on the provided
+        order ID and details.
       parameters:
-      - description: Delete product request
+      - description: Update order request
         in: body
         name: request
         required: true
         schema:
-          $ref: '#/definitions/delivery.DeleteProductRequest'
+          $ref: '#/definitions/delivery.UpdateOrderRequest'
       produces:
       - application/json
       responses:
         "200":
-          description: Product deleted successfully
+          description: Order updated successfully
           schema:
             $ref: '#/definitions/delivery.InfoResponse'
         "400":
@@ -957,9 +950,12 @@ paths:
           description: Internal server error
           schema:
             $ref: '#/definitions/delivery.InfoResponse'
-      summary: Delete a product
+      security:
+      - BearerAuth: []
+      summary: Update an existing order
       tags:
-      - Product
+      - Orders
+  /product/create-product:
     post:
       consumes:
       - application/json
@@ -986,25 +982,28 @@ paths:
           description: Internal server error
           schema:
             $ref: '#/definitions/delivery.InfoResponse'
+      security:
+      - BearerAuth: []
       summary: Create a new product
       tags:
       - Product
-    put:
+  /product/delete-product:
+    delete:
       consumes:
       - application/json
-      description: Updates an existing product based on the provided product details.
+      description: Deletes a product based on the provided product ID.
       parameters:
-      - description: Update product request
+      - description: Delete product request
         in: body
         name: request
         required: true
         schema:
-          $ref: '#/definitions/delivery.UpdateProductRequest'
+          $ref: '#/definitions/delivery.DeleteProductRequest'
       produces:
       - application/json
       responses:
         "200":
-          description: Product updated successfully
+          description: Product deleted successfully
           schema:
             $ref: '#/definitions/delivery.InfoResponse'
         "400":
@@ -1015,43 +1014,12 @@ paths:
           description: Internal server error
           schema:
             $ref: '#/definitions/delivery.InfoResponse'
-      summary: Update an existing product
+      security:
+      - BearerAuth: []
+      summary: Delete a product
       tags:
       - Product
-  /product/{id}:
-    get:
-      consumes:
-      - application/json
-      description: Retrieves a product based on the provided product ID.
-      parameters:
-      - description: Product ID
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Product retrieved successfully
-          schema:
-            $ref: '#/definitions/delivery.ProductResponse'
-        "400":
-          description: Invalid request
-          schema:
-            $ref: '#/definitions/delivery.InfoResponse'
-        "404":
-          description: Product not found
-          schema:
-            $ref: '#/definitions/delivery.InfoResponse'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/delivery.InfoResponse'
-      summary: Get a product by ID
-      tags:
-      - Product
-  /products:
+  /product/get-all-products:
     get:
       consumes:
       - application/json
@@ -1082,7 +1050,76 @@ paths:
           description: Internal server error
           schema:
             $ref: '#/definitions/delivery.InfoResponse'
+      security:
+      - BearerAuth: []
       summary: Get all products
+      tags:
+      - Product
+  /product/get-product:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves a product based on the provided product ID.
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Product retrieved successfully
+          schema:
+            $ref: '#/definitions/delivery.ProductResponse'
+        "400":
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/delivery.InfoResponse'
+        "404":
+          description: Product not found
+          schema:
+            $ref: '#/definitions/delivery.InfoResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/delivery.InfoResponse'
+      security:
+      - BearerAuth: []
+      summary: Get a product by ID
+      tags:
+      - Product
+  /product/update-product:
+    put:
+      consumes:
+      - application/json
+      description: Updates an existing product based on the provided product details.
+      parameters:
+      - description: Update product request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/delivery.UpdateProductRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Product updated successfully
+          schema:
+            $ref: '#/definitions/delivery.InfoResponse'
+        "400":
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/delivery.InfoResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/delivery.InfoResponse'
+      security:
+      - BearerAuth: []
+      summary: Update an existing product
       tags:
       - Product
 securityDefinitions:

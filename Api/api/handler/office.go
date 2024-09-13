@@ -11,6 +11,7 @@ import (
 // CreateOffice handles the creation of a new office.
 // @Summary Create a new office
 // @Description Creates a new office based on the provided office details.
+// @Security BearerAuth
 // @Tags Office
 // @Accept json
 // @Produce json
@@ -18,7 +19,7 @@ import (
 // @Success 200 {object} delivery.InfoResponse "Office created successfully"
 // @Failure 400 {object} delivery.InfoResponse "Invalid request"
 // @Failure 500 {object} delivery.InfoResponse "Internal server error"
-// @Router /office [post]
+// @Router /office/create-office [post]
 func (h *Handler) CreateOffice(ctx *gin.Context) {
 	var req delivery.CreateOfficeRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -38,6 +39,7 @@ func (h *Handler) CreateOffice(ctx *gin.Context) {
 // GetOffice handles the retrieval of a specific office by its ID.
 // @Summary Get office details
 // @Description Retrieves details of an office based on the provided office ID.
+// @Security BearerAuth
 // @Tags Office
 // @Accept json
 // @Produce json
@@ -45,7 +47,7 @@ func (h *Handler) CreateOffice(ctx *gin.Context) {
 // @Success 200 {object} delivery.OfficeResponse "Office details retrieved successfully"
 // @Failure 400 {object} delivery.InfoResponse "Invalid request"
 // @Failure 500 {object} delivery.InfoResponse "Internal server error"
-// @Router /office/{office_id} [get]
+// @Router /office/get-office [get]
 func (h *Handler) GetOffice(ctx *gin.Context) {
 	officeID := ctx.Param("office_id")
 	if officeID == "" {
@@ -65,6 +67,7 @@ func (h *Handler) GetOffice(ctx *gin.Context) {
 // GetAllOffice handles the retrieval of all offices with optional pagination.
 // @Summary Get all offices
 // @Description Retrieves a list of all offices with optional pagination.
+// @Security BearerAuth
 // @Tags Office
 // @Accept json
 // @Produce json
@@ -73,7 +76,7 @@ func (h *Handler) GetOffice(ctx *gin.Context) {
 // @Success 200 {object} delivery.GetAllOfficesResponse "List of all offices retrieved successfully"
 // @Failure 400 {object} delivery.InfoResponse "Invalid request"
 // @Failure 500 {object} delivery.InfoResponse "Internal server error"
-// @Router /offices [get]
+// @Router /office/get-all-ofice [get]
 func (h *Handler) GetAllOffice(ctx *gin.Context) {
 	page, err := strconv.Atoi(ctx.DefaultQuery("page", "1"))
 	if err != nil || page <= 0 {
@@ -104,6 +107,7 @@ func (h *Handler) GetAllOffice(ctx *gin.Context) {
 // UpdateOffice handles the update of an existing office.
 // @Summary Update an existing office
 // @Description Updates the details of an existing office based on the provided office ID and details.
+// @Security BearerAuth
 // @Tags Office
 // @Accept json
 // @Produce json
@@ -112,7 +116,7 @@ func (h *Handler) GetAllOffice(ctx *gin.Context) {
 // @Failure 400 {object} delivery.InfoResponse "Invalid request"
 // @Failure 404 {object} delivery.InfoResponse "Office not found"
 // @Failure 500 {object} delivery.InfoResponse "Internal server error"
-// @Router /office [put]
+// @Router /office/update-office [put]
 func (h *Handler) UpdateOffice(ctx *gin.Context) {
 	var req delivery.UpdateOfficeRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -136,6 +140,7 @@ func (h *Handler) UpdateOffice(ctx *gin.Context) {
 // DeleteOffice handles the deletion of an office by its ID.
 // @Summary Delete an office
 // @Description Deletes an office based on the provided office ID.
+// @Security BearerAuth
 // @Tags Office
 // @Accept json
 // @Produce json
@@ -144,7 +149,7 @@ func (h *Handler) UpdateOffice(ctx *gin.Context) {
 // @Failure 400 {object} delivery.InfoResponse "Invalid request"
 // @Failure 404 {object} delivery.InfoResponse "Office not found"
 // @Failure 500 {object} delivery.InfoResponse "Internal server error"
-// @Router /office [delete]
+// @Router /office/delete-office [delete]
 func (h *Handler) DeleteOffice(ctx *gin.Context) {
 	var req delivery.DeleteOfficeRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {

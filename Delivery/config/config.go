@@ -30,7 +30,7 @@ func Load() Config {
 
 	config := Config{}
 
-	config.HTTP_PORT = cast.ToString(getOrReturnDefaultValue("HTTP_PORT", ":8080"))
+	config.HTTP_PORT = cast.ToString(getOrReturnDefaultValue("HTTP_PORT", "delivery:8082"))
 	config.REDIS_HOST = cast.ToString(getOrReturnDefaultValue("REDIS_HOST", "random-host"))
 	config.REDIS_PORT = cast.ToInt(getOrReturnDefaultValue("REDIS_PORT", 6379))
 	config.EMAIL_PASSWORD = cast.ToString(getOrReturnDefaultValue("EMAIL_PASSWORD", "My-email-password"))

@@ -134,3 +134,25 @@ func GetEmailFromToken(ctx *gin.Context) (string, error) {
 
 	return email, nil
 }
+
+func GetRoleFromToken(ctx *gin.Context) (string, error) {
+	authHeader := ctx.GetHeader("Authorization")
+	if authHeader == "" {
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Authorization header is missing"})
+		return "", nil
+	}
+
+	claims, err := ExtractClaim(authHeader)
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Authorization header is missing"})
+		return "", nil
+	}
+
+	userId := cast.ToString(claims["role"])
+	if userId == "" {
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "User ID not found in token"})
+		return "", nil
+	}
+
+	return userId, nil
+}

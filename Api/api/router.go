@@ -12,7 +12,7 @@ import (
 
 // @title Voting service
 // @version 1.0
-// @description Voting service
+// @description Delivery service
 // @BasePath /
 // @securityDefinitions.apikey BearerAuth
 // @in header

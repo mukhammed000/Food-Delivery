@@ -5,6 +5,7 @@ import (
 	"auth/api/helper/models"
 	"auth/genproto/auth"
 	"auth/token"
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -38,7 +39,10 @@ func (h *Handler) RegisterUser(ctx *gin.Context) {
 
 	code, err := h.SendEmail(request.Email)
 	if err != nil {
-		panic(err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Failed to send email. Please try again later.",
+		})
+		return
 	}
 
 	req := auth.Register{
@@ -89,9 +93,12 @@ func (h *Handler) RegisterCourier(ctx *gin.Context) {
 
 	code, err := h.SendEmail(request.Email)
 	if err != nil {
-		panic(err)
+		log.Println("----------------------------------->", err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Failed to send email. Please try again later.",
+		})
+		return
 	}
-
 	req := auth.Register{
 		Id:          uuid.NewString(),
 		FirstName:   request.FirstName,
@@ -195,11 +202,11 @@ func (h *Handler) UpdateProfile(ctx *gin.Context) {
 	}
 
 	request := auth.UpdateProfileRequest{
-		Id: id,
-		FirstName: req.FirstName,
-		LastName: req.LastName,
+		Id:          id,
+		FirstName:   req.FirstName,
+		LastName:    req.LastName,
 		DateOfBirth: req.DateOfBirth,
-		Gender: req.Gender,
+		Gender:      req.Gender,
 	}
 
 	res, err := h.Auth.UpdateProfile(ctx, &request)

@@ -11,6 +11,7 @@ import (
 // CreateProduct handles the creation of a new product.
 // @Summary Create a new product
 // @Description Creates a new product based on the provided product details.
+// @Security BearerAuth
 // @Tags Product
 // @Accept json
 // @Produce json
@@ -18,7 +19,7 @@ import (
 // @Success 200 {object} delivery.InfoResponse "Product created successfully"
 // @Failure 400 {object} delivery.InfoResponse "Invalid request"
 // @Failure 500 {object} delivery.InfoResponse "Internal server error"
-// @Router /product [post]
+// @Router /product/create-product [post]
 func (h *Handler) CreateProduct(ctx *gin.Context) {
 	var req delivery.CreateProductRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -38,6 +39,7 @@ func (h *Handler) CreateProduct(ctx *gin.Context) {
 // GetProduct handles retrieving a product by its ID.
 // @Summary Get a product by ID
 // @Description Retrieves a product based on the provided product ID.
+// @Security BearerAuth
 // @Tags Product
 // @Accept json
 // @Produce json
@@ -46,7 +48,7 @@ func (h *Handler) CreateProduct(ctx *gin.Context) {
 // @Failure 400 {object} delivery.InfoResponse "Invalid request"
 // @Failure 404 {object} delivery.InfoResponse "Product not found"
 // @Failure 500 {object} delivery.InfoResponse "Internal server error"
-// @Router /product/{id} [get]
+// @Router /product/get-product [get]
 func (h *Handler) GetProduct(ctx *gin.Context) {
 	productID := ctx.Param("id")
 
@@ -75,6 +77,7 @@ func (h *Handler) GetProduct(ctx *gin.Context) {
 // GetAllProduct handles retrieving a list of all products with optional pagination.
 // @Summary Get all products
 // @Description Retrieves a list of all products with optional pagination.
+// @Security BearerAuth
 // @Tags Product
 // @Accept json
 // @Produce json
@@ -83,7 +86,7 @@ func (h *Handler) GetProduct(ctx *gin.Context) {
 // @Success 200 {object} delivery.GetProductsResponse "Products retrieved successfully"
 // @Failure 400 {object} delivery.InfoResponse "Invalid request"
 // @Failure 500 {object} delivery.InfoResponse "Internal server error"
-// @Router /products [get]
+// @Router /product/get-all-products [get]
 func (h *Handler) GetAllProduct(ctx *gin.Context) {
 	page, err := strconv.Atoi(ctx.DefaultQuery("page", "1"))
 	if err != nil || page < 1 {
@@ -111,6 +114,7 @@ func (h *Handler) GetAllProduct(ctx *gin.Context) {
 // UpdateProduct handles updating an existing product.
 // @Summary Update an existing product
 // @Description Updates an existing product based on the provided product details.
+// @Security BearerAuth
 // @Tags Product
 // @Accept json
 // @Produce json
@@ -118,7 +122,7 @@ func (h *Handler) GetAllProduct(ctx *gin.Context) {
 // @Success 200 {object} delivery.InfoResponse "Product updated successfully"
 // @Failure 400 {object} delivery.InfoResponse "Invalid request"
 // @Failure 500 {object} delivery.InfoResponse "Internal server error"
-// @Router /product [put]
+// @Router /product/update-product [put]
 func (h *Handler) UpdateProduct(ctx *gin.Context) {
 	var req delivery.UpdateProductRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -138,6 +142,7 @@ func (h *Handler) UpdateProduct(ctx *gin.Context) {
 // DeleteProduct handles the deletion of a product.
 // @Summary Delete a product
 // @Description Deletes a product based on the provided product ID.
+// @Security BearerAuth
 // @Tags Product
 // @Accept json
 // @Produce json
@@ -145,7 +150,7 @@ func (h *Handler) UpdateProduct(ctx *gin.Context) {
 // @Success 200 {object} delivery.InfoResponse "Product deleted successfully"
 // @Failure 400 {object} delivery.InfoResponse "Invalid request"
 // @Failure 500 {object} delivery.InfoResponse "Internal server error"
-// @Router /product [delete]
+// @Router /product/delete-product [delete]
 func (h *Handler) DeleteProduct(ctx *gin.Context) {
 	var req delivery.DeleteProductRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {

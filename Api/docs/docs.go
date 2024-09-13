@@ -17,6 +17,11 @@ const docTemplate = `{
     "paths": {
         "/cart/create-cart": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Creates a new cart for a user and returns the cart details.",
                 "consumes": [
                     "application/json"
@@ -28,17 +33,6 @@ const docTemplate = `{
                     "Cart"
                 ],
                 "summary": "Create a new cart",
-                "parameters": [
-                    {
-                        "description": "Cart creation request",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/delivery.CreateCartRequest"
-                        }
-                    }
-                ],
                 "responses": {
                     "200": {
                         "description": "Cart created successfully",
@@ -61,8 +55,13 @@ const docTemplate = `{
                 }
             }
         },
-        "/cart/item": {
+        "/cart/create-cart-item": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Adds an item to the specified cart based on the provided details.",
                 "consumes": [
                     "application/json"
@@ -107,9 +106,14 @@ const docTemplate = `{
                 }
             }
         },
-        "/cart/item/{cart_id}/{product_id}": {
-            "get": {
-                "description": "Retrieves the details of a specific item in a cart based on the provided cart ID and product ID.",
+        "/cart/delete-cart": {
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Deletes an existing cart based on the provided cart ID.",
                 "consumes": [
                     "application/json"
                 ],
@@ -119,38 +123,25 @@ const docTemplate = `{
                 "tags": [
                     "Cart"
                 ],
-                "summary": "Get a cart item by cart ID and product ID",
+                "summary": "Delete a cart by ID",
                 "parameters": [
                     {
                         "type": "string",
                         "description": "Cart ID",
-                        "name": "cart_id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Product ID",
-                        "name": "product_id",
+                        "name": "id",
                         "in": "path",
                         "required": true
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Cart item details",
-                        "schema": {
-                            "$ref": "#/definitions/delivery.CartItem"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad request",
+                        "description": "Cart deleted successfully",
                         "schema": {
                             "$ref": "#/definitions/delivery.InfoResponse"
                         }
                     },
-                    "404": {
-                        "description": "Cart item not found",
+                    "400": {
+                        "description": "Bad request",
                         "schema": {
                             "$ref": "#/definitions/delivery.InfoResponse"
                         }
@@ -162,8 +153,15 @@ const docTemplate = `{
                         }
                     }
                 }
-            },
+            }
+        },
+        "/cart/delete-cart-item": {
             "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Deletes a specific item from a cart based on the provided cart ID and product ID.",
                 "consumes": [
                     "application/json"
@@ -219,8 +217,240 @@ const docTemplate = `{
                 }
             }
         },
-        "/cart/item/{cart_id}/{product_id}/quantity": {
+        "/cart/get-cart": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieves the details of a cart based on the provided cart ID.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "Get a cart by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Cart ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Cart retrieved successfully",
+                        "schema": {
+                            "$ref": "#/definitions/delivery.CartResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/delivery.InfoResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Cart not found",
+                        "schema": {
+                            "$ref": "#/definitions/delivery.InfoResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/delivery.InfoResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/cart/get-cart-by-user": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieves the details of a cart for a specific user based on the provided user ID.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "Get a cart by user ID",
+                "responses": {
+                    "200": {
+                        "description": "Cart retrieved successfully",
+                        "schema": {
+                            "$ref": "#/definitions/delivery.CartResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/delivery.InfoResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Cart not found",
+                        "schema": {
+                            "$ref": "#/definitions/delivery.InfoResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/delivery.InfoResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/cart/get-cart-item": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieves the details of a specific item in a cart based on the provided cart ID and product ID.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "Get a cart item by cart ID and product ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Cart ID",
+                        "name": "cart_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Product ID",
+                        "name": "product_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Cart item details",
+                        "schema": {
+                            "$ref": "#/definitions/delivery.CartItem"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/delivery.InfoResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Cart item not found",
+                        "schema": {
+                            "$ref": "#/definitions/delivery.InfoResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/delivery.InfoResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/cart/update-cart": {
             "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Updates the details of an existing cart based on the provided cart ID and request data.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "Update an existing cart",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Cart ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Cart update request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/delivery.UpdateCartRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Cart updated successfully",
+                        "schema": {
+                            "$ref": "#/definitions/delivery.InfoResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/delivery.InfoResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Cart not found",
+                        "schema": {
+                            "$ref": "#/definitions/delivery.InfoResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/delivery.InfoResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/cart/update-cart-item-quantity": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Updates the quantity of a specific item in a cart based on the provided cart ID, product ID, and new quantity.",
                 "consumes": [
                     "application/json"
@@ -285,257 +515,13 @@ const docTemplate = `{
                 }
             }
         },
-        "/cart/user/{user_id}": {
-            "get": {
-                "description": "Retrieves the details of a cart for a specific user based on the provided user ID.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Cart"
-                ],
-                "summary": "Get a cart by user ID",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "User ID",
-                        "name": "user_id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Cart retrieved successfully",
-                        "schema": {
-                            "$ref": "#/definitions/delivery.CartResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad request",
-                        "schema": {
-                            "$ref": "#/definitions/delivery.InfoResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Cart not found",
-                        "schema": {
-                            "$ref": "#/definitions/delivery.InfoResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/delivery.InfoResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/cart/{id}": {
-            "get": {
-                "description": "Retrieves the details of a cart based on the provided cart ID.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Cart"
-                ],
-                "summary": "Get a cart by ID",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Cart ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Cart retrieved successfully",
-                        "schema": {
-                            "$ref": "#/definitions/delivery.CartResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad request",
-                        "schema": {
-                            "$ref": "#/definitions/delivery.InfoResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Cart not found",
-                        "schema": {
-                            "$ref": "#/definitions/delivery.InfoResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/delivery.InfoResponse"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "description": "Updates the details of an existing cart based on the provided cart ID and request data.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Cart"
-                ],
-                "summary": "Update an existing cart",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Cart ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Cart update request",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/delivery.UpdateCartRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Cart updated successfully",
-                        "schema": {
-                            "$ref": "#/definitions/delivery.InfoResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad request",
-                        "schema": {
-                            "$ref": "#/definitions/delivery.InfoResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Cart not found",
-                        "schema": {
-                            "$ref": "#/definitions/delivery.InfoResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/delivery.InfoResponse"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "description": "Deletes an existing cart based on the provided cart ID.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Cart"
-                ],
-                "summary": "Delete a cart by ID",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Cart ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Cart deleted successfully",
-                        "schema": {
-                            "$ref": "#/definitions/delivery.InfoResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad request",
-                        "schema": {
-                            "$ref": "#/definitions/delivery.InfoResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/delivery.InfoResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/office": {
-            "put": {
-                "description": "Updates the details of an existing office based on the provided office ID and details.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Office"
-                ],
-                "summary": "Update an existing office",
-                "parameters": [
-                    {
-                        "description": "Update office request",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/delivery.UpdateOfficeRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Office updated successfully",
-                        "schema": {
-                            "$ref": "#/definitions/delivery.InfoResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid request",
-                        "schema": {
-                            "$ref": "#/definitions/delivery.InfoResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Office not found",
-                        "schema": {
-                            "$ref": "#/definitions/delivery.InfoResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/delivery.InfoResponse"
-                        }
-                    }
-                }
-            },
+        "/office/create-office": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Creates a new office based on the provided office details.",
                 "consumes": [
                     "application/json"
@@ -578,8 +564,15 @@ const docTemplate = `{
                         }
                     }
                 }
-            },
+            }
+        },
+        "/office/delete-office": {
             "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Deletes an office based on the provided office ID.",
                 "consumes": [
                     "application/json"
@@ -630,52 +623,13 @@ const docTemplate = `{
                 }
             }
         },
-        "/office/{office_id}": {
+        "/office/get-all-ofice": {
             "get": {
-                "description": "Retrieves details of an office based on the provided office ID.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Office"
-                ],
-                "summary": "Get office details",
-                "parameters": [
+                "security": [
                     {
-                        "type": "string",
-                        "description": "Office ID",
-                        "name": "office_id",
-                        "in": "path",
-                        "required": true
+                        "BearerAuth": []
                     }
                 ],
-                "responses": {
-                    "200": {
-                        "description": "Office details retrieved successfully",
-                        "schema": {
-                            "$ref": "#/definitions/delivery.OfficeResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid request",
-                        "schema": {
-                            "$ref": "#/definitions/delivery.InfoResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/delivery.InfoResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/offices": {
-            "get": {
                 "description": "Retrieves a list of all offices with optional pagination.",
                 "consumes": [
                     "application/json"
@@ -725,8 +679,119 @@ const docTemplate = `{
                 }
             }
         },
-        "/order": {
+        "/office/get-office": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieves details of an office based on the provided office ID.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Office"
+                ],
+                "summary": "Get office details",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Office ID",
+                        "name": "office_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Office details retrieved successfully",
+                        "schema": {
+                            "$ref": "#/definitions/delivery.OfficeResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "$ref": "#/definitions/delivery.InfoResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/delivery.InfoResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/office/update-office": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Updates the details of an existing office based on the provided office ID and details.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Office"
+                ],
+                "summary": "Update an existing office",
+                "parameters": [
+                    {
+                        "description": "Update office request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/delivery.UpdateOfficeRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Office updated successfully",
+                        "schema": {
+                            "$ref": "#/definitions/delivery.InfoResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "$ref": "#/definitions/delivery.InfoResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Office not found",
+                        "schema": {
+                            "$ref": "#/definitions/delivery.InfoResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/delivery.InfoResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/order/create-order": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Creates a new order based on the provided order details.",
                 "consumes": [
                     "application/json"
@@ -771,8 +836,13 @@ const docTemplate = `{
                 }
             }
         },
-        "/order/{order_id}": {
+        "/order/get-order": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Fetches details of an order based on the provided order ID.",
                 "consumes": [
                     "application/json"
@@ -821,8 +891,64 @@ const docTemplate = `{
                 }
             }
         },
-        "/orders": {
+        "/orders/delete-order": {
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Deletes an existing order based on the provided order ID.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Delete an order",
+                "parameters": [
+                    {
+                        "description": "Delete order request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/delivery.DeleteOrderRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Order deleted successfully",
+                        "schema": {
+                            "$ref": "#/definitions/delivery.InfoResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "$ref": "#/definitions/delivery.InfoResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/delivery.InfoResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/orders/get-all-orders": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Retrieves a paginated list of all orders based on provided pagination details.",
                 "consumes": [
                     "application/json"
@@ -872,98 +998,15 @@ const docTemplate = `{
                         }
                     }
                 }
-            },
-            "put": {
-                "description": "Updates the details of an existing order based on the provided order ID and details.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Orders"
-                ],
-                "summary": "Update an existing order",
-                "parameters": [
-                    {
-                        "description": "Update order request",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/delivery.UpdateOrderRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Order updated successfully",
-                        "schema": {
-                            "$ref": "#/definitions/delivery.InfoResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid request",
-                        "schema": {
-                            "$ref": "#/definitions/delivery.InfoResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/delivery.InfoResponse"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "description": "Deletes an existing order based on the provided order ID.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Orders"
-                ],
-                "summary": "Delete an order",
-                "parameters": [
-                    {
-                        "description": "Delete order request",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/delivery.DeleteOrderRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Order deleted successfully",
-                        "schema": {
-                            "$ref": "#/definitions/delivery.InfoResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid request",
-                        "schema": {
-                            "$ref": "#/definitions/delivery.InfoResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/delivery.InfoResponse"
-                        }
-                    }
-                }
             }
         },
-        "/orders/client": {
+        "/orders/get-order-by-client": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Retrieves a paginated list of orders for a specific client based on provided pagination details.",
                 "consumes": [
                     "application/json"
@@ -1022,9 +1065,14 @@ const docTemplate = `{
                 }
             }
         },
-        "/product": {
+        "/orders/update-order": {
             "put": {
-                "description": "Updates an existing product based on the provided product details.",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Updates the details of an existing order based on the provided order ID and details.",
                 "consumes": [
                     "application/json"
                 ],
@@ -1032,23 +1080,23 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Product"
+                    "Orders"
                 ],
-                "summary": "Update an existing product",
+                "summary": "Update an existing order",
                 "parameters": [
                     {
-                        "description": "Update product request",
+                        "description": "Update order request",
                         "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/delivery.UpdateProductRequest"
+                            "$ref": "#/definitions/delivery.UpdateOrderRequest"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Product updated successfully",
+                        "description": "Order updated successfully",
                         "schema": {
                             "$ref": "#/definitions/delivery.InfoResponse"
                         }
@@ -1066,8 +1114,15 @@ const docTemplate = `{
                         }
                     }
                 }
-            },
+            }
+        },
+        "/product/create-product": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Creates a new product based on the provided product details.",
                 "consumes": [
                     "application/json"
@@ -1110,8 +1165,15 @@ const docTemplate = `{
                         }
                     }
                 }
-            },
+            }
+        },
+        "/product/delete-product": {
             "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Deletes a product based on the provided product ID.",
                 "consumes": [
                     "application/json"
@@ -1156,8 +1218,69 @@ const docTemplate = `{
                 }
             }
         },
-        "/product/{id}": {
+        "/product/get-all-products": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieves a list of all products with optional pagination.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Product"
+                ],
+                "summary": "Get all products",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "Page number",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "description": "Number of products per page",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Products retrieved successfully",
+                        "schema": {
+                            "$ref": "#/definitions/delivery.GetProductsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "$ref": "#/definitions/delivery.InfoResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/delivery.InfoResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/get-product": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Retrieves a product based on the provided product ID.",
                 "consumes": [
                     "application/json"
@@ -1206,9 +1329,14 @@ const docTemplate = `{
                 }
             }
         },
-        "/products": {
-            "get": {
-                "description": "Retrieves a list of all products with optional pagination.",
+        "/product/update-product": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Updates an existing product based on the provided product details.",
                 "consumes": [
                     "application/json"
                 ],
@@ -1218,28 +1346,23 @@ const docTemplate = `{
                 "tags": [
                     "Product"
                 ],
-                "summary": "Get all products",
+                "summary": "Update an existing product",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "default": 1,
-                        "description": "Page number",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "default": 10,
-                        "description": "Number of products per page",
-                        "name": "limit",
-                        "in": "query"
+                        "description": "Update product request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/delivery.UpdateProductRequest"
+                        }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Products retrieved successfully",
+                        "description": "Product updated successfully",
                         "schema": {
-                            "$ref": "#/definitions/delivery.GetProductsResponse"
+                            "$ref": "#/definitions/delivery.InfoResponse"
                         }
                     },
                     "400": {
@@ -1304,20 +1427,6 @@ const docTemplate = `{
                 },
                 "quantity": {
                     "type": "integer"
-                }
-            }
-        },
-        "delivery.CreateCartRequest": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "string"
-                },
-                "status": {
-                    "type": "string"
-                },
-                "user_id": {
-                    "type": "string"
                 }
             }
         },

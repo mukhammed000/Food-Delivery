@@ -1,25 +1,36 @@
 package handler
 
 import (
+	"api/api/token"
 	"api/genproto/delivery"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 // CreateCart handles the creation of a new cart.
 // @Summary Create a new cart
 // @Description Creates a new cart for a user and returns the cart details.
+// @Security BearerAuth
 // @Tags Cart
 // @Accept json
 // @Produce json
-// @Param request body delivery.CreateCartRequest true "Cart creation request"
 // @Success 200 {object} delivery.CartResponse "Cart created successfully"
 // @Failure 400 {object} delivery.InfoResponse"Bad request"
 // @Failure 500 {object} delivery.InfoResponse"Internal server error"
 // @Router /cart/create-cart [post]
 func (h *Handler) CreateCart(ctx *gin.Context) {
-	var req delivery.CreateCartRequest
+	id, err := token.GetIdFromToken(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
+		return
+	}
+	req := delivery.CreateCartRequest{
+		Id:     uuid.NewString(),
+		UserId: id,
+		Status: "created",
+	}
 
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, delivery.InfoResponse{Message: "Invalid request", Success: false})
@@ -38,6 +49,7 @@ func (h *Handler) CreateCart(ctx *gin.Context) {
 // GetCart handles retrieving a cart by ID.
 // @Summary Get a cart by ID
 // @Description Retrieves the details of a cart based on the provided cart ID.
+// @Security BearerAuth
 // @Tags Cart
 // @Accept json
 // @Produce json
@@ -46,7 +58,7 @@ func (h *Handler) CreateCart(ctx *gin.Context) {
 // @Failure 400 {object} delivery.InfoResponse "Bad request"
 // @Failure 404 {object} delivery.InfoResponse "Cart not found"
 // @Failure 500 {object} delivery.InfoResponse "Internal server error"
-// @Router /cart/{id} [get]
+// @Router /cart/get-cart [get]
 func (h *Handler) GetCart(ctx *gin.Context) {
 	id := ctx.Param("id")
 
@@ -62,19 +74,23 @@ func (h *Handler) GetCart(ctx *gin.Context) {
 // GetCartByUser handles retrieving a cart by user ID.
 // @Summary Get a cart by user ID
 // @Description Retrieves the details of a cart for a specific user based on the provided user ID.
+// @Security BearerAuth
 // @Tags Cart
 // @Accept json
 // @Produce json
-// @Param user_id path string true "User ID"
 // @Success 200 {object} delivery.CartResponse "Cart retrieved successfully"
 // @Failure 400 {object} delivery.InfoResponse "Bad request"
 // @Failure 404 {object} delivery.InfoResponse "Cart not found"
 // @Failure 500 {object} delivery.InfoResponse "Internal server error"
-// @Router /cart/user/{user_id} [get]
+// @Router /cart/get-cart-by-user [get]
 func (h *Handler) GetCartByUser(ctx *gin.Context) {
-	userID := ctx.Param("user_id")
+	id, err := token.GetIdFromToken(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
+		return
+	}
 
-	resp, err := h.Cart.GetCartByUser(ctx, &delivery.GetCartByUserRequest{UserId: userID})
+	resp, err := h.Cart.GetCartByUser(ctx, &delivery.GetCartByUserRequest{UserId: id})
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, delivery.InfoResponse{Message: "Failed to retrieve cart"})
 		return
@@ -86,6 +102,7 @@ func (h *Handler) GetCartByUser(ctx *gin.Context) {
 // UpdateCart handles updating an existing cart.
 // @Summary Update an existing cart
 // @Description Updates the details of an existing cart based on the provided cart ID and request data.
+// @Security BearerAuth
 // @Tags Cart
 // @Accept json
 // @Produce json
@@ -95,7 +112,7 @@ func (h *Handler) GetCartByUser(ctx *gin.Context) {
 // @Failure 400 {object} delivery.InfoResponse "Bad request"
 // @Failure 404 {object} delivery.InfoResponse "Cart not found"
 // @Failure 500 {object} delivery.InfoResponse "Internal server error"
-// @Router /cart/{id} [put]
+// @Router /cart/update-cart [put]
 func (h *Handler) UpdateCart(ctx *gin.Context) {
 	id := ctx.Param("id")
 
@@ -119,6 +136,7 @@ func (h *Handler) UpdateCart(ctx *gin.Context) {
 // DeleteCart handles deleting a cart by ID.
 // @Summary Delete a cart by ID
 // @Description Deletes an existing cart based on the provided cart ID.
+// @Security BearerAuth
 // @Tags Cart
 // @Accept json
 // @Produce json
@@ -126,7 +144,7 @@ func (h *Handler) UpdateCart(ctx *gin.Context) {
 // @Success 200 {object} delivery.InfoResponse "Cart deleted successfully"
 // @Failure 400 {object} delivery.InfoResponse "Bad request"
 // @Failure 500 {object} delivery.InfoResponse "Internal server error"
-// @Router /cart/{id} [delete]
+// @Router /cart/delete-cart [delete]
 func (h *Handler) DeleteCart(ctx *gin.Context) {
 	id := ctx.Param("id")
 
@@ -142,6 +160,7 @@ func (h *Handler) DeleteCart(ctx *gin.Context) {
 // CreateCartItem handles adding a new item to a cart.
 // @Summary Add a new item to a cart
 // @Description Adds an item to the specified cart based on the provided details.
+// @Security BearerAuth
 // @Tags Cart
 // @Accept json
 // @Produce json
@@ -149,7 +168,7 @@ func (h *Handler) DeleteCart(ctx *gin.Context) {
 // @Success 200 {object} delivery.InfoResponse "Item added to cart successfully"
 // @Failure 400 {object} delivery.InfoResponse "Bad request"
 // @Failure 500 {object} delivery.InfoResponse "Internal server error"
-// @Router /cart/item [post]
+// @Router /cart/create-cart-item [post]
 func (h *Handler) CreateCartItem(ctx *gin.Context) {
 	var req delivery.CreateCartItemRequest
 
@@ -170,6 +189,7 @@ func (h *Handler) CreateCartItem(ctx *gin.Context) {
 // GetCartItem handles retrieving a cart item based on cart ID and product ID.
 // @Summary Get a cart item by cart ID and product ID
 // @Description Retrieves the details of a specific item in a cart based on the provided cart ID and product ID.
+// @Security BearerAuth
 // @Tags Cart
 // @Accept json
 // @Produce json
@@ -179,7 +199,7 @@ func (h *Handler) CreateCartItem(ctx *gin.Context) {
 // @Failure 400 {object} delivery.InfoResponse "Bad request"
 // @Failure 404 {object} delivery.InfoResponse "Cart item not found"
 // @Failure 500 {object} delivery.InfoResponse "Internal server error"
-// @Router /cart/item/{cart_id}/{product_id} [get]
+// @Router /cart/get-cart-item [get]
 func (h *Handler) GetCartItem(ctx *gin.Context) {
 	cartID := ctx.Param("cart_id")
 	productID := ctx.Param("product_id")
@@ -208,6 +228,7 @@ func (h *Handler) GetCartItem(ctx *gin.Context) {
 // DeleteCartItem handles the deletion of a specific item from a cart.
 // @Summary Delete a cart item
 // @Description Deletes a specific item from a cart based on the provided cart ID and product ID.
+// @Security BearerAuth
 // @Tags Cart
 // @Accept json
 // @Produce json
@@ -217,7 +238,7 @@ func (h *Handler) GetCartItem(ctx *gin.Context) {
 // @Failure 400 {object} delivery.InfoResponse "Bad request"
 // @Failure 404 {object} delivery.InfoResponse "Cart item not found"
 // @Failure 500 {object} delivery.InfoResponse "Internal server error"
-// @Router /cart/item/{cart_id}/{product_id} [delete]
+// @Router /cart/delete-cart-item [delete]
 func (h *Handler) DeleteCartItem(ctx *gin.Context) {
 	cartID := ctx.Param("cart_id")
 	productID := ctx.Param("product_id")
@@ -241,6 +262,7 @@ func (h *Handler) DeleteCartItem(ctx *gin.Context) {
 // UpdateCartItemQuantity handles the update of the quantity of a specific item in a cart.
 // @Summary Update the quantity of a cart item
 // @Description Updates the quantity of a specific item in a cart based on the provided cart ID, product ID, and new quantity.
+// @Security BearerAuth
 // @Tags Cart
 // @Accept json
 // @Produce json
@@ -251,7 +273,7 @@ func (h *Handler) DeleteCartItem(ctx *gin.Context) {
 // @Failure 400 {object} delivery.InfoResponse "Bad request"
 // @Failure 404 {object} delivery.InfoResponse "Cart item not found"
 // @Failure 500 {object} delivery.InfoResponse "Internal server error"
-// @Router /cart/item/{cart_id}/{product_id}/quantity [put]
+// @Router /cart/update-cart-item-quantity [put]
 func (h *Handler) UpdateCartItemQuantity(ctx *gin.Context) {
 	cartID := ctx.Param("cart_id")
 	productID := ctx.Param("product_id")

@@ -13,6 +13,7 @@ import (
 // CreateOrder handles the creation of a new order.
 // @Summary Create a new order
 // @Description Creates a new order based on the provided order details.
+// @Security BearerAuth
 // @Tags Orders
 // @Accept json
 // @Produce json
@@ -20,7 +21,7 @@ import (
 // @Success 200 {object} delivery.InfoResponse "Order created successfully"
 // @Failure 400 {object} delivery.InfoResponse "Invalid request"
 // @Failure 500 {object} delivery.InfoResponse "Internal server error"
-// @Router /order [post]
+// @Router /order/create-order [post]
 func (h *Handler) CreateOrder(ctx *gin.Context) {
 	var req delivery.CreateOrderRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -40,6 +41,7 @@ func (h *Handler) CreateOrder(ctx *gin.Context) {
 // GetOrder handles fetching details of a specific order by its ID.
 // @Summary Get order details
 // @Description Fetches details of an order based on the provided order ID.
+// @Security BearerAuth
 // @Tags Orders
 // @Accept json
 // @Produce json
@@ -48,7 +50,7 @@ func (h *Handler) CreateOrder(ctx *gin.Context) {
 // @Failure 400 {object} delivery.InfoResponse "Invalid request"
 // @Failure 404 {object} delivery.InfoResponse "Order not found"
 // @Failure 500 {object} delivery.InfoResponse "Internal server error"
-// @Router /order/{order_id} [get]
+// @Router /order/get-order [get]
 func (h *Handler) GetOrder(ctx *gin.Context) {
 	orderID := ctx.Param("order_id")
 	if orderID == "" {
@@ -77,6 +79,7 @@ func (h *Handler) GetOrder(ctx *gin.Context) {
 // GetAllOrders handles fetching a paginated list of all orders.
 // @Summary Get all orders
 // @Description Retrieves a paginated list of all orders based on provided pagination details.
+// @Security BearerAuth
 // @Tags Orders
 // @Accept json
 // @Produce json
@@ -85,7 +88,7 @@ func (h *Handler) GetOrder(ctx *gin.Context) {
 // @Success 200 {object} delivery.GetAllOrdersResponse "Orders retrieved successfully"
 // @Failure 400 {object} delivery.InfoResponse "Invalid request"
 // @Failure 500 {object} delivery.InfoResponse "Internal server error"
-// @Router /orders [get]
+// @Router /orders/get-all-orders [get]
 func (h *Handler) GetAllOrders(ctx *gin.Context) {
 	pageStr := ctx.Query("page")
 	limitStr := ctx.Query("limit")
@@ -119,6 +122,7 @@ func (h *Handler) GetAllOrders(ctx *gin.Context) {
 // GetOrderByClient handles fetching orders by a specific client.
 // @Summary Get orders by client
 // @Description Retrieves a paginated list of orders for a specific client based on provided pagination details.
+// @Security BearerAuth
 // @Tags Orders
 // @Accept json
 // @Produce json
@@ -128,7 +132,7 @@ func (h *Handler) GetAllOrders(ctx *gin.Context) {
 // @Success 200 {object} delivery.GetOrderByClientResponse "Orders retrieved successfully"
 // @Failure 400 {object} delivery.InfoResponse "Invalid request"
 // @Failure 500 {object} delivery.InfoResponse "Internal server error"
-// @Router /orders/client [get]
+// @Router /orders/get-order-by-client [get]
 func (h *Handler) GetOrderByClient(ctx *gin.Context) {
 	clientID := ctx.Query("client_id")
 	if clientID == "" {
@@ -169,6 +173,7 @@ func (h *Handler) GetOrderByClient(ctx *gin.Context) {
 // UpdateOrder handles updating an existing order.
 // @Summary Update an existing order
 // @Description Updates the details of an existing order based on the provided order ID and details.
+// @Security BearerAuth
 // @Tags Orders
 // @Accept json
 // @Produce json
@@ -176,7 +181,7 @@ func (h *Handler) GetOrderByClient(ctx *gin.Context) {
 // @Success 200 {object} delivery.InfoResponse "Order updated successfully"
 // @Failure 400 {object} delivery.InfoResponse "Invalid request"
 // @Failure 500 {object} delivery.InfoResponse "Internal server error"
-// @Router /orders [put]
+// @Router /orders/update-order [put]
 func (h *Handler) UpdateOrder(ctx *gin.Context) {
 	var req delivery.UpdateOrderRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -196,6 +201,7 @@ func (h *Handler) UpdateOrder(ctx *gin.Context) {
 // DeleteOrder handles the deletion of an order.
 // @Summary Delete an order
 // @Description Deletes an existing order based on the provided order ID.
+// @Security BearerAuth
 // @Tags Orders
 // @Accept json
 // @Produce json
@@ -203,7 +209,7 @@ func (h *Handler) UpdateOrder(ctx *gin.Context) {
 // @Success 200 {object} delivery.InfoResponse "Order deleted successfully"
 // @Failure 400 {object} delivery.InfoResponse "Invalid request"
 // @Failure 500 {object} delivery.InfoResponse "Internal server error"
-// @Router /orders [delete]
+// @Router /orders/delete-order [delete]
 func (h *Handler) DeleteOrder(ctx *gin.Context) {
 	var req delivery.DeleteOrderRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {

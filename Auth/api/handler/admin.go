@@ -23,6 +23,17 @@ import (
 func (h *Handler) DeleteUser(ctx *gin.Context) {
 	userID := ctx.Query("user_id")
 
+	role, err := token.GetRoleFromToken(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
+		return
+	}
+
+	if role != "admin" {
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token or only admin can do it!"})
+		return
+	}
+
 	authHeader := ctx.GetHeader("Authorization")
 	if authHeader == "" {
 		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Authorization header missing"})
@@ -64,6 +75,16 @@ func (h *Handler) ListAllUsers(ctx *gin.Context) {
 	adminID, err := token.GetIdFromToken(ctx)
 	if err != nil {
 		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
+		return
+	}
+	role, err := token.GetRoleFromToken(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
+		return
+	}
+
+	if role != "admin" {
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token or only admin can do it!"})
 		return
 	}
 

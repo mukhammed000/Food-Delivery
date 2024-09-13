@@ -19,13 +19,12 @@ func main() {
 	cfg := config.Load()
 
 	// Connecting to serivce
-	deliveryConn, err := grpc.Dial(cfg.HTTP_PORT, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	deliveryConn, err := grpc.Dial(cfg.DELIVERY_SERVICE, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatal("Error while creating new client of delivery service: ", err.Error())
 	}
 	defer deliveryConn.Close()
 
-	// Initializing services
 	csc := pb.NewCartServiceClient(deliveryConn)
 	osc := pb.NewOrdersServiceClient(deliveryConn)
 	oscc := pb.NewOfficeClient(deliveryConn)

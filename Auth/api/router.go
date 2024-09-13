@@ -59,7 +59,7 @@ func NewGin(h *handler.Handler) *gin.Engine {
 		add.POST("/verify-new-email", h.VerifyNewEmail)
 	}
 
-	swaggerURL := ginSwagger.URL("http://localhost:8080/swagger/doc.json")
+	swaggerURL := ginSwagger.URL("http://localhost:8081/swagger/doc.json")
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(files.Handler, swaggerURL))
 
 	return r
